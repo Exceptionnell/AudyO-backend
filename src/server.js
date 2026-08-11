@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const conversationsRouter = require('./routes/conversations');
 const translateRouter = require('./routes/translate');
 const searchRouter = require('./routes/search');
+const historyRouter = require('./routes/history');
+const { ensureSchema } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +33,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 app.use('/v1/conversations', conversationsRouter);
 app.use('/v1/translate', translateRouter);
 app.use('/v1/search', searchRouter);
+app.use('/v1/history', historyRouter);
 
 // --- 404 et erreurs ---
 app.use((req, res) => res.status(404).json({ error: 'Route inconnue.' }));
@@ -39,9 +42,14 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Erreur interne du serveur.' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`AudyO backend démarré sur http://localhost:${PORT}`);
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('⚠️  ANTHROPIC_API_KEY absente — copiez .env.example en .env et renseignez votre clé.');
+  }
+  try {
+    await ensureSchema();
+  } catch (err) {
+    console.error('⚠️  Impossible d\'initialiser la base de données :', err.message);
   }
 });

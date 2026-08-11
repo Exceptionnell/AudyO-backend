@@ -32,6 +32,24 @@ curl http://localhost:3000/health
 | GET | `/health` | — | `{ status: "ok" }` |
 | POST | `/v1/conversations/summary` | `{ segments: [{ speaker: 0, text: "..." }] }` | `{ summary: "..." }` |
 | POST | `/v1/translate` | `{ text, sourceLang, targetLang }` (codes type `fr-FR`) | `{ translation: "..." }` |
+| POST | `/v1/search` | `{ query, transcript }` | `{ answer: "..." }` |
+| POST | `/v1/history` | `{ deviceId, kind, title, transcript, summary }` | `{ id, createdAt }` |
+| GET | `/v1/history?deviceId=...` | — | `{ entries: [...] }` |
+| GET | `/v1/history/:id?deviceId=...` | — | Détail complet d'une entrée |
+| DELETE | `/v1/history/:id?deviceId=...` | — | `{ deleted: true }` |
+
+### Historique persistant (base de données)
+
+Nécessite la variable d'environnement `DATABASE_URL` (voir `.env.example`).
+Sans elle, le reste de l'API continue de fonctionner normalement — seul
+l'historique reste indisponible (erreur explicite, pas de plantage).
+La table est créée automatiquement au démarrage si elle n'existe pas.
+
+Aucune authentification n'existe encore : chaque appareil est identifié par
+un `deviceId` anonyme généré et stocké côté client (`localStorage`). C'est
+suffisant pour retrouver son propre historique sur un même appareil/navigateur,
+mais ce n'est pas une vraie sécurité — un futur système de comptes utilisateurs
+devra remplacer ce mécanisme.
 
 ## Brancher le prototype web ou l'app mobile dessus
 
