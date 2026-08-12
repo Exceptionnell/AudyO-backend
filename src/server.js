@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 
 const conversationsRouter = require('./routes/conversations');
 const translateRouter = require('./routes/translate');
+const translateAudioRouter = require('./routes/translate-audio');
 const searchRouter = require('./routes/search');
 const historyRouter = require('./routes/history');
 const { ensureSchema } = require('./db');
@@ -28,7 +29,7 @@ app.use(cors({
     callback(new Error('Origine non autorisée par la politique CORS.'));
   },
 }));
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '10mb' }));
 
 // Limite basique contre les abus — à affiner (par utilisateur authentifié) une fois l'auth en place.
 app.use(rateLimit({ windowMs: 60 * 1000, max: 30, standardHeaders: true, legacyHeaders: false }));
@@ -37,6 +38,7 @@ app.use(rateLimit({ windowMs: 60 * 1000, max: 30, standardHeaders: true, legacyH
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 app.use('/v1/conversations', conversationsRouter);
 app.use('/v1/translate', translateRouter);
+app.use('/v1/translate-audio', translateAudioRouter);
 app.use('/v1/search', searchRouter);
 app.use('/v1/history', historyRouter);
 

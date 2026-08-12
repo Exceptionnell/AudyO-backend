@@ -4,9 +4,10 @@
 // à auditer pour la conformité RGPD (dossier §6).
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = 'claude-sonnet-4-6';
+const MODEL_DEFAULT = 'claude-sonnet-4-6';   // résumé, recherche : privilégie la qualité
+const MODEL_FAST = 'claude-haiku-4-5-20251001'; // traduction : privilégie la vitesse
 
-async function callClaude(prompt, maxTokens = 800) {
+async function callClaude(prompt, maxTokens = 800, model = MODEL_DEFAULT) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey || apiKey.startsWith('sk-ant-votre-cle')) {
     const err = new Error('ANTHROPIC_API_KEY manquante ou non configurée sur le serveur.');
@@ -22,7 +23,7 @@ async function callClaude(prompt, maxTokens = 800) {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: MODEL,
+      model,
       max_tokens: maxTokens,
       messages: [{ role: 'user', content: prompt }],
     }),
@@ -50,4 +51,4 @@ async function callClaude(prompt, maxTokens = 800) {
   return text;
 }
 
-module.exports = { callClaude };
+module.exports = { callClaude, MODEL_FAST, MODEL_DEFAULT };
