@@ -1,5 +1,5 @@
 const express = require('express');
-const { callClaude, MODEL_FAST } = require('../services/claude');
+const { callClaude, MODEL_DEFAULT } = require('../services/claude');
 
 const router = express.Router();
 
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
       `{"detectedLang": "${labelA}" ou "${labelB}", "translation": "..."}\n\n` +
       `Phrase : ${text}`;
     try {
-      const raw = await callClaude(prompt, 200, MODEL_FAST);
+      const raw = await callClaude(prompt, 300, MODEL_DEFAULT);
       const cleaned = raw.trim().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '');
       const parsed = JSON.parse(cleaned);
       if (!parsed.translation || !parsed.detectedLang) throw new Error('Réponse JSON incomplète.');
@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
     `Texte : ${text}`;
 
   try {
-    const translation = await callClaude(prompt, 200, MODEL_FAST);
+    const translation = await callClaude(prompt, 300, MODEL_DEFAULT);
     res.json({ translation });
   } catch (err) {
     console.error('[translate]', err.code || '', err.message);
