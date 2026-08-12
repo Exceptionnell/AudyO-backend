@@ -5,7 +5,7 @@
 
 const UPLOAD_URL = 'https://api.assemblyai.com/v2/upload';
 const TRANSCRIPT_URL = 'https://api.assemblyai.com/v2/transcript';
-const POLL_INTERVAL_MS = 400;
+const POLL_INTERVAL_MS = 200;
 const POLL_TIMEOUT_MS = 15000;
 
 function getApiKey() {
