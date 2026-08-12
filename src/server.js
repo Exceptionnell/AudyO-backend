@@ -10,6 +10,11 @@ const historyRouter = require('./routes/history');
 const { ensureSchema } = require('./db');
 
 const app = express();
+
+// Render (comme la plupart des hébergeurs) place le service derrière un proxy
+// inverse qui ajoute l'en-tête X-Forwarded-For — sans ce réglage, express-rate-limit
+// rejette les requêtes car il ne peut pas identifier l'IP réelle de l'appelant.
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // --- Sécurité de base ---
